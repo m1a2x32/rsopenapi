@@ -38,6 +38,17 @@ float RobotController::findOrientationToPoint(pos2d_t orientationCoords)
     return (turn_direction * fmin(abs_angle_diff, M_PI/4));
 }
 
+bool RobotController::rotateToPoint(pos2d_t desCoords)
+{ // missing should return true when facing the point
+// false while orientation is not correct
+    if(!_robot->read(data))
+    {
+        return false;
+    }
+    _robot->writeVelocity(0, 0, findOrientationToPoint(desCoords));
+    return true;
+}
+
 bool RobotController::moveToPoint(pos2d desCoords)
 {
     if(!_robot->read(data))
