@@ -19,7 +19,6 @@ float RobotController::findOrientationToPoint(pos2d_t orientationCoords)
     // Calculate distance
     float targetTheta = atan2(dy, dx);
     float deltaTheta = 2*M_PI-(data.self.pose.rz-targetTheta+M_PI/2);
-            
     if(deltaTheta > M_PI)
     {
         deltaTheta -= 2*M_PI;
@@ -39,14 +38,24 @@ float RobotController::findOrientationToPoint(pos2d_t orientationCoords)
 }
 
 bool RobotController::rotateToPoint(pos2d_t desCoords)
-{ // missing should return true when facing the point
-// false while orientation is not correct
+{
     if(!_robot->read(data))
     {
         return false;
     }
-    _robot->writeVelocity(0, 0, findOrientationToPoint(desCoords));
-    return true;
+    float angle_to_rotate = findOrientationToPoint(desCoords);
+
+    std::cout << "\nRobot missing radians to rotate: " << (round(angle_to_rotate*100)/100) << std::endl; // rounding up to 3 decimal points
+    if((round(angle_to_rotate*100)/100) != 0)
+    {
+        _robot->writeVelocity(0, 0, angle_to_rotate);
+        return false;
+    }
+    else
+    {
+        _robot->writeVelocity(0, 0, 0);
+        return true;
+    }
 }
 
 bool RobotController::moveToPoint(pos2d desCoords)

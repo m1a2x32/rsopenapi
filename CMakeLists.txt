@@ -11,4 +11,3 @@ enable_testing()
 
 add_subdirectory(rtdb2)
 add_subdirectory(src)
-add_subdirectory(example)
