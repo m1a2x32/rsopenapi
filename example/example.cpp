@@ -2,9 +2,9 @@
 #include <unistd.h>
 #include "RtDB2.h"
 #include "comm.hpp"
-#include "Robot.hpp"
 #include "Service.hpp"
 #include "boost/program_options.hpp"
+#include <Controller.hpp>
 
 namespace po = boost::program_options;
 
@@ -48,35 +48,24 @@ int main(int argc, char **argv)
     service.start();
 
     // Create proxy to robot
-    rsopen::Robot robot(robotid, hash);
-    robot.writeKickElevation(true); // lob shot
+    RobotController rob(robotid, hash);
 
-    // Control robot
-    float t = 0;
+    float x = 0, y = 0;
+    bool goalReached = true;
     while (true)
     {
-        rsopen::interrobot_t data;
-        if (robot.read(data))
+        if(goalReached)
         {
-            // successful read
-            std::cout << "Robot at (" << data.self.pose.x << ", " << data.self.pose.y << ", " << data.self.pose.rz << ")" 
-                      << "; Control ball: " << data.player_status.control_ball << std::endl;
-            usleep(250000);
-
-            if (data.player_status.control_ball)
-            {
-                std::cout << "Kicking ball..." << std::endl;
-                robot.writeKick(5);
-            }
+            std::cout << "Enter x dest: " << std::endl;
+            std::cin >> x;
+            std::cout << "Enter y dest: " << std::endl;
+            std::cin >> y;
+            goalReached = false;
         }
         else
         {
-            // unsuccessful read
-            std::cout << "No data" << std::endl;
-            usleep(1000000);
+            goalReached = rob.moveToPoint(pos2d(x,y));
         }
-        t += 0.1;
-        robot.writeVelocity(0, sin(t), 0);
     }
 
     return 0;
