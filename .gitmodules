@@ -1,3 +1,7 @@
 [submodule "rtdb2"]
 	path = rtdb2
 	url = https://github.com/RoboCup-MSL/rtdb2.git
+[submodule "BehaviorTree.CPP"]
+	path = BehaviorTree.CPP
+	url = https://github.com/BehaviorTree/BehaviorTree.CPP.git
+	branch = v3.8
