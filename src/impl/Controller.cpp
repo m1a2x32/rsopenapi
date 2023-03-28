@@ -87,3 +87,16 @@ bool RobotController::moveToPoint(pos2d desCoords)
         return true;
     }
 }
+
+bool RobotController::kick(int velocity, bool isLobShot)
+{
+    _robot->writeKickElevation(isLobShot);
+    _robot->writeKick(velocity);
+    return true;
+}
+
+interrobot_t RobotController::GetData()
+{
+    _robot->read(data);
+    return data;
+}
