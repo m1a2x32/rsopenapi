@@ -13,13 +13,14 @@ class RobotController
         bool moveToPoint(pos2d_t desCoords);
         bool rotateToPoint(pos2d_t desCoords);
         bool kick(int velocity, bool isLobShot);
+        bool grabBall();
         // void GetData(interrobot_t& data);
         interrobot_t GetData();
     private:
         float findOrientationToPoint(pos2d_t orientationCoords);
         Robot *_robot;
         interrobot_t data;
-        float distTolerance = 1;
+        float distTolerance = 0.15;
 };
 
 #endif
