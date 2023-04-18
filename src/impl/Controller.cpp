@@ -1,4 +1,5 @@
 #include <Controller.hpp>
+#include <boost/thread/thread.hpp>
 
 using namespace rsopen;
 
@@ -67,18 +68,55 @@ bool RobotController::moveToPoint(pos2d desCoords)
     usleep(250000);
     float dy = desCoords.y-data.self.pose.y;
     float dx = desCoords.x-data.self.pose.x;
+    float targetTheta = atan2(dy, dx);
+    float deltaTheta = targetTheta - data.self.pose.rz;
 
-    float angle_to_rotate = findOrientationToPoint(desCoords);
-    // get distance 
+    // float angle_to_rotate = findOrientationToPoint(desCoords);
+    // // get distance 
     float distance = std::hypotf(dx,dy);
-    float linear_vel = distance > 2 ? 0.3 : 0;
-    linear_vel = distance > 5 ? 2 : 1;
+    float linear_vel = distance > 5 ? 2 : 1;
+    linear_vel = distance > 10 ? 3 : 2;
 
     std::cout << "\nRobot pose: " << data.self.pose.x << " , " << data.self.pose.y << ", " << data.self.pose.rz << std::endl;
 
+
     if(distance >= distTolerance)
     {
-        _robot->writeVelocity(0, linear_vel*distance, angle_to_rotate);
+        _robot->writeVelocity(linear_vel*cos(deltaTheta), linear_vel*sin(deltaTheta), findOrientationToPoint(desCoords));
+        // _robot->writeVelocity(0, linear_vel*distance, linear_vel*angle_to_rotate);
+        return false;
+    }
+    else
+    {
+        _robot->writeVelocity(0, 0, 0);
+        return true;
+    }
+}
+
+bool RobotController::grabBall()
+{
+    if(!_robot->read(data))
+    {
+        return false;
+    }
+    usleep(250000);
+    float dy = data.ball.pos.y-data.self.pose.y;
+    float dx = data.ball.pos.x-data.self.pose.x;
+
+    float targetTheta = atan2(dy, dx);
+    float deltaTheta = targetTheta - data.self.pose.rz;
+
+    // float angle_to_rotate = findOrientationToPoint(desCoords);
+    // // get distance 
+    float distance = std::hypotf(dx,dy);
+    float linear_vel = distance > 2 ? 2 : 0.5;
+
+    std::cout << "\nRobot pose: " << data.self.pose.x << " , " << data.self.pose.y << ", " << data.self.pose.rz << std::endl;
+
+
+    if(!data.player_status.control_ball)
+    {
+        _robot->writeVelocity(linear_vel*cos(deltaTheta), linear_vel*sin(deltaTheta), findOrientationToPoint(pos2d(data.ball.pos.x,data.ball.pos.y)));
         return false;
     }
     else
