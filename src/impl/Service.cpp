@@ -71,6 +71,11 @@ std::string Service::configFile() const
     if (existsFile(name)) {
         return name;
     }
+    // ros2 workspace implementation
+    name = root + "/../../../../build/robotsoccer/config/" + CONFIGFILENAME;
+    if (existsFile(name)) {
+        return name;
+    }
     return CONFIGFILENAME;
 }
 

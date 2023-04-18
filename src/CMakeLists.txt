@@ -4,6 +4,7 @@ project(rsopenapi)
 
 find_package(RtDB)
 find_package(Boost COMPONENTS thread program_options REQUIRED QUIET)
+find_package(ament_cmake REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17) # for std::filesystem
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -26,10 +27,6 @@ target_link_libraries(rsopenapi
 target_include_directories(rsopenapi
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-)
-
-
-
-
+        $<INSTALL_INTERFACE:include>)
 
 
