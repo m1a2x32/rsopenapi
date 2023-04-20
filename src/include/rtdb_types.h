@@ -69,6 +69,10 @@ typedef struct pos2d {
 	pos2d(float ax = 0, float ay = 0)
 	: x(ax), y(ay)
 	{}
+
+	bool operator<(const pos2d &ob) const {
+        return x < ob.x || (x == ob.x && y < ob.y);
+    }
 } pos2d_t;
 
 typedef struct pos3d {
